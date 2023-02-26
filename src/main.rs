@@ -1,15 +1,17 @@
-use axum::{routing::get, Router};
-use std::net::SocketAddr;
+use axum::{routing::get, Router, Server};
+use load_dotenv::load_dotenv;
+
+load_dotenv!();
 
 #[tokio::main]
 async fn main() {
-    println!("Hello, world!");
-
     let app = Router::new().route("/", get(get_request));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    let addr = env!("ADDRESS").parse().unwrap();
 
-    axum::Server::bind(&addr)
+    println!("Server running at: http://{}", addr);
+
+    Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
